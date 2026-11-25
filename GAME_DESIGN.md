@@ -1189,3 +1189,53 @@ Sáu reviewer đọc toàn bộ code; các luật dưới đây là kết quả,
 - Còn treo: không làm SpriteAtlas: sprite nằm trong `Resources/` nên đóng atlas sẽ đưa cả atlas
   lẫn texture gốc vào APK (gấp đôi dung lượng phần đó); muốn làm phải chuyển sprite ra khỏi `Resources` trước. Quảng cáo:
   Play khai 13+ nên không bật cờ "hướng tới trẻ em"; nếu đổi đối tượng xuống dưới 13 thì phải bật trong `AdMob.StartSdk`.
+
+## Shop + skin (23/11)
+Người dùng: "thiết kế lại trang shop cho hợp phong cách app… 1 trang riêng ko phải modal… thêm thật nhiều skin và thể loại
+skin". Bản mẫu duyệt: số 1 trong `Assets/Art/Reference/shop_mockups.png` (ChatGPT, 4 bố cục); bản code đầu bị chê "chưa giống
+với ảnh" nên làm lại sát mẫu: nền sáng, bệ băng, khung lưới, cột tab một hàng.
+- **Bố cục** (`UI/ShopView`): nền là tranh vịnh băng ban ngày `bg_shop` (`shop_bay.png`, `Tools/prep_backgrounds.py`), phủ
+  0,12. Thanh trên Layout A: Back · ruy băng băng "Cửa hàng" ở giữa · ví sao. Trái: **cột tab một hàng** trong khung
+  (8 dòng băng, bước 130 = `UiKit.MinHit`; 8 dòng cần 1040 px > mọi màn nên cột **cuộn**, nhớ vị trí cuộn). Giữa: **khung băng
+  có tuyết** rộng 850, tâm x = −40 (vừa khe ở 4:3 = 1663), tiêu đề = icon + tên tab nằm dưới lớp tuyết (header 96), rồi
+  **lưới 3×3 thẻ** (bước 262×222; ở 20:9 thân cao 792 ≥ 96 + 666 + 24). Phải: **không khung**, vật đang chọn đứng trên **bệ băng**
+  `shop_podium` giữa vịnh, tên + một dòng chữ, **một nút chính** màu vàng cam. Không cuộn lưới: mỗi loại đúng 9 thẻ (test `SkinTests`).
+- **Tín hiệu không chỉ bằng màu**: tab đang mở = dòng vàng cam + to hơn; thẻ đang chọn = viền vàng dày (hình riêng nằm sau thẻ:
+  `Outline` của UI chỉ vẽ lại sprite viền tối) + to hơn; đang dùng = dải vàng cam + tick + chữ; đã có = tick + chữ; chưa đủ
+  sao = ổ khóa + chữ mờ, vẫn bấm được và phần xem trước ghi "Cần thêm N sao".
+- **Tab 1 = Nâng cấp** (luật cũ giữ nguyên: dòng mô tả "Cấp n/3: tác dụng" từ `Shop.Effect`).
+- **7 loại skin × 9 = 63 skin** (`Progress/Skins.cs`, mỗi loại có 1 bản "Cổ điển" miễn phí), **chỉ đổi hình, không đổi lối chơi**:
+  Màu lông · Trang phục · Bóng (quả bóng trên cần máy phóng) · Vệt bay · Va chạm · Máy phóng · Dây đu.
+  Shader `Resources/Shaders/Recolor` nhân màu lông vào điểm ảnh nhạt-ít bão hòa (lông trắng) và xoay sắc độ điểm ảnh đỏ/xanh
+  ngọc sáng-bão hòa (mũ, khăn), giữ viền navy, má hồng, kính vàng; đo trên giá trị gamma (dự án render Linear). Mọi hình hải
+  cẩu (PupRig và ảnh UI tên `pup*`, `hud_pup` qua `UiKit.Image`) đều mặc skin. Shader không hỗ trợ mask của UI: hình hải cẩu
+  trong vùng cuộn phải bỏ material.
+- **Mua bằng sao** (người dùng 23/11: "bỏ cá đi, mua bằng sao"; bản đầu có tiền "cá" riêng, đã bỏ). Cùng ví với nâng cấp
+  (`spentStars`). Giá 1–5 sao, cả 62 skin trả tiền = 165 sao (+32 sao nâng cấp); sao kiếm vô hạn ở các lâu đài sinh tự động.
+  Xóa dữ liệu lưu xóa cả skin (câu xác nhận có ghi).
+- **Save**: `skins` (id đã mua), `worn` (id đang dùng theo `SkinKind`, "" = cổ điển). `Skins.Normalize` bỏ id lạ/trùng
+  và không cho mặc thứ chưa sở hữu. `SkinKind` lưu theo chỉ số: chỉ thêm vào cuối.
+- **Skin chỉ hiện trong màn chơi** (pha 1 và pha 2; người dùng 23/11: "skin chỉ thay ở pha 1 và pha 2 thôi"):
+  `Skins.InPlay` bật khi `GameManager` bắt đầu màn, tắt khi rời màn; menu, bản đồ, thẻ kết quả giữ hải cẩu cổ điển. Shop
+  vẫn cho xem thử từ save.
+- **Trang phục vẽ tay** (tab Trang phục): **Hải tặc** và **Ninja** (băng đầu xanh đen có tua + tấm bạc, áo võ xanh đen,
+  đai đỏ; 25/11, cả 43 tờ đạt lần đầu nhờ gửi kèm ảnh mẫu bộ đồ + câu "This is a DIFFERENT sheet… redraw THESE poses
+  only" cho các tờ giống nhau). Bộ đầu là **Hải tặc** (mũ ba góc đầu lâu có viền đỏ + áo thuyền trưởng đỏ viền
+  vàng, thắt lưng nâu). **Không có bịt mắt** (người dùng: "các ảnh bịt mắt bị lệch r kìa"): ChatGPT không giữ được chỗ
+  bịt mắt giữa các khung; chi tiết nhỏ trên mặt đều bị lệch, nên trang phục không đặt gì lên mặt. Mỗi bộ ~40 tờ 16 khung,
+  chỉ các hoạt ảnh trong màn (bỏ menu, thẻ kết quả, loading, hải cẩu bị nhốt). Tờ nguồn:
+  `Assets/Art/Reference/outfit_<tên>/<tên tờ gốc>`, cắt bằng `python3 -I Tools/slice_sheets.py --outfit <tên>` thành
+  `<tên>_pup_<anim>_<i>`; `Art.Outfit` đổi mọi hình `pup*` sang khung của bộ đang mặc (thiếu hoạt ảnh nào thì dùng khung
+  gốc của hoạt ảnh đó). Mỗi hoạt ảnh được co về đúng cỡ trung bình của bản gốc (`match_classic`), nén ASTC 6×6.
+  Cách vẽ đạt: tờ đầu gửi kèm lời tả bộ đồ; các tờ sau trong cùng chat; **luôn so từng tờ với tờ gốc cạnh nhau**: ChatGPT
+  hay chép tư thế của tờ trước khi hai tờ giống nhau (treo dây / bungee, các kiểu văng), tờ đó vẽ lại trong chat mới với
+  2 ảnh (ảnh mẫu bộ đồ + tờ gốc).
+- **Người dùng muốn skin "khác hẳn", vẽ mới chứ không chỉ đổi màu** (23/11: "vẽ thêm nhiều kiểu skin khác hẳn đi ví dụ như
+  thêm quần áo… tương tự cho các loại skin khác"). Máy phóng: ChatGPT vẽ lại tờ `catapult_pair` (cần + xe) theo chủ đề, giữ
+  nguyên dáng. Trang phục vẽ mới: hải cẩu có 841 khung/61 hoạt ảnh (~60 tờ), làm **1 bộ trước** để duyệt.
+- **Máy phóng và dây đu đều vẽ mới** (25/11), không còn bản đổi màu: 8 máy phóng (tre, kẹo, hải tặc, băng, tên lửa, núi lửa,
+  rồng, hoàng gia) từ `catapult_skin_<t>.png`; 8 dây (dây leo, kẹo, ruy băng, cáp cảnh báo, băng, cầu vồng, xích vàng, phép
+  thuật) từ một tờ `rope_skins.png` (8 dải dọc), cắt bằng `Tools/cut_ropes.py`: mỗi dải được cắt đúng số chu kỳ lặp (tự
+  tương quan theo chiều dọc) nên ghép liền không lộ mối khi `SwingRope` lát dọc. Chỉ tab Màu lông còn là đổi màu.
+- **Tranh mới**: `skin_props.png` (7 hình hiệu ứng + dấu tick + 8 quả bóng), `shop_podium.png`, cắt bằng `Tools/cut_props.py`.
+  Thêm PNG mới xong phải chạy `ProjectBuilder.ConfigureArt`.

@@ -1,6 +1,14 @@
 # Changelog
 
 ## [Unreleased]
+- New shop page on a bright bay painting: a tab list on the left, cards in the middle and the chosen item large on an
+  ice podium on the right. Upgrades moved into its first tab.
+- Skins in 7 kinds, bought with stars like the upgrades: fur colours, outfits, catapult balls, flight trails, impact
+  effects, catapults and ropes. Skins show while you play a level.
+- Two hand-drawn outfits, the Pirate Captain and the Ninja, each with its own drawing for every move the pup makes in
+  a level.
+- Eight hand-drawn catapults (Bamboo, Candy, Pirate Ship, Ice Crystal, Rocket, Volcano, Dragon, Royal) and eight
+  hand-drawn ropes (jungle vine, candy cane, ribbon, hazard cable, ice, rainbow, gold chain, magic).
 - The level map can be dragged on screens that crop it (tablets and long phones), so no level is ever out of reach; it
   opens on your next level, and a tap always picks the level nearest your finger.
 - The upgrade shop now tells you exactly what the next level does, with the real numbers.

@@ -13,6 +13,11 @@ anchor so frames never jump. Rows with the same name join into one animation.
 PupRig reads the anchor per pose; keep ANCHOR in sync with PupRig.cs.
 
 Usage: python3 -I Tools/slice_sheets.py   (then run ProjectBuilder.BuildAll to reimport)
+
+Outfit skins (23/11): python3 -I Tools/slice_sheets.py --outfit pirate
+cuts Assets/Art/Reference/outfit_pirate/<same sheet names> (ChatGPT redraws of the pup sheets in other clothes, same
+grid and poses) into pirate_pup_<anim>_<i>.png. An outfit has no red beanie to measure, so each sheet takes the scale
+measured on its ORIGINAL sheet (times the width ratio, should the redraw come back at another resolution).
 """
 from __future__ import annotations
 
@@ -26,6 +31,8 @@ from PIL import Image, ImageFilter
 ROOT = Path(__file__).resolve().parent.parent
 REF = ROOT / "Assets/Art/Reference"
 OUT = ROOT / "Assets/Resources/Art"
+
+OUTFIT: str | None = None   # set by --outfit: the outfit being cut (see the module docstring)
 
 BEANIE_PX = 50.0        # sqrt of the red beanie area on a standing pup, output pixels (idle measured 50)
 WHITE = 232             # all channels above this count as background when connected to the border
@@ -444,20 +451,56 @@ def with_smooth(sheets: list) -> list:
 
 
 def main() -> None:
+    global OUTFIT
+    if "--outfit" in sys.argv:
+        at = sys.argv.index("--outfit") + 1
+        if at >= len(sys.argv):
+            sys.exit("usage: slice_sheets.py --outfit <name>")
+        OUTFIT = sys.argv[at]
     failed = []
     for entry in with_smooth(SHEETS):
+        if OUTFIT and entry[1] != "pup":
+            continue
         try:
             cut_sheet(entry)
         except (ValueError, OSError, KeyError, IndexError, ZeroDivisionError) as e:   # a row that measures 0 (no beanie found) fails alone
             failed.append(f"{entry[0]}: {e}")
             print(f"{entry[0]}: FAILED, {e}")
     for alias, source in ALIASES.items():
+        if OUTFIT:
+            if alias.startswith("pup") and (OUT / f"{OUTFIT}_{source}.png").exists():
+                Image.open(OUT / f"{OUTFIT}_{source}.png").save(OUT / f"{OUTFIT}_{alias}.png")
+            continue
         if (OUT / f"{source}.png").exists():
             Image.open(OUT / f"{source}.png").save(OUT / f"{alias}.png")
         else:
             print(f"alias {alias}: source {source}.png missing, old copy left as is")
     if failed:
         sys.exit("some sheets were not cut:\n  " + "\n  ".join(failed))
+
+
+def box_size(img: Image.Image) -> float:
+    """Square root of the drawing's bounding-box area: a size that holds for any pose (standing, flying, curled)."""
+    b = img.getchannel("A").getbbox()
+    return ((b[2] - b[0]) * (b[3] - b[1])) ** 0.5 if b else 0.0
+
+
+def match_classic(prefix: str, anim: str, slots: list[int], frames: list[Image.Image]) -> list[Image.Image]:
+    """An outfit redraw comes back a little bigger or smaller than the sheet it copies (up to 22 % on 23/11): scale the
+    whole animation so its median size matches the classic frames already cut, so the pup never changes size when it
+    changes clothes. Clamped, so a bad redraw cannot blow up."""
+    classic = [OUT / f"{prefix.split('_', 1)[1]}_{anim}_{i}.png" for i in slots]
+    classic = [box_size(Image.open(c)) for c in classic if c.exists()]
+    mine = [box_size(f) for f in frames]
+    if not classic or not any(mine):
+        return frames
+    k = sorted(classic)[len(classic) // 2] / sorted(mine)[len(mine) // 2]
+    if not 0.8 <= k <= 1.25:
+        print(f"  {anim}: redraw is {1 / k:.2f}x the classic size, only partly corrected (redraw this sheet)")
+    k = min(1.25, max(0.8, k))
+    if abs(k - 1.0) < 0.02:
+        return frames
+    return [f.resize((max(1, round(f.width * k)), max(1, round(f.height * k))), Image.LANCZOS) for f in frames]
 
 
 def cut_sheet(entry: tuple) -> None:
@@ -492,6 +535,16 @@ def cut_sheet(entry: tuple) -> None:
         scale = px / median_of(heights, f"the height of row '{row}'")
     else:
         scale = BEANIE_PX / median_of([beanie(f) for f in grid[row_names.index(rule)] if f], f"the beanie of row '{rule}'")
+    if OUTFIT:
+        redraw = REF / f"outfit_{OUTFIT}" / name
+        if not redraw.exists():
+            print(f"{name}: no {OUTFIT} redraw yet, skipped")
+            return
+        scale *= Image.open(REF / name).width / Image.open(redraw).width
+        grid = cells(redraw, cols, rows)
+        if only_col is not None:
+            grid = [[row[only_col]] for row in grid]
+        prefix = f"{OUTFIT}_{prefix}"
     anims: dict[str, list[Image.Image | None]] = {}
     for row, anim in zip(grid, row_names):
         if anim is not None:   # None = a row of the sheet that is not used
@@ -501,6 +554,8 @@ def cut_sheet(entry: tuple) -> None:
     # Measure and place every anim first, then write: a sheet that fails leaves its old frames untouched.
     results = []
     for anim, cells_ in anims.items():
+        if OUTFIT and anim in UNUSED:
+            continue
         slots = [i for i, f in enumerate(cells_) if f is not None and out_name(prefix, anim, i)]
         gaps = [i for i, f in enumerate(cells_) if f is None and out_name(prefix, anim, i)]
         if gaps:   # the rigs load frames 0..n-1 in order; a hole would show an empty sprite
@@ -515,7 +570,9 @@ def cut_sheet(entry: tuple) -> None:
                   for f in crop(frames, mode)]
         if anim in STRIP_LEDGE:
             scaled = [strip_ledge(f) for f in scaled]
-        if name in FX_FREE and anim in PER_FRAME_SIZE:
+        if OUTFIT:
+            scaled = match_classic(prefix, anim, slots, scaled)
+        if name in FX_FREE and anim in PER_FRAME_SIZE and not OUTFIT:   # even_size measures the beanie
             scaled = [even_size(f) for f in scaled]
         try:
             placed = place(scaled, mode) if mode != "cell" else [pad(f) for f in scaled]
@@ -527,7 +584,9 @@ def cut_sheet(entry: tuple) -> None:
         for slot, frame in zip(slots, placed if anim not in UNUSED else []):
             written.add(out_name(prefix, anim, slot))
             frame.save(OUT / f"{out_name(prefix, anim, slot)}.png")
-        if anim == "divening":
+        if OUTFIT:
+            pass   # an outfit's frames are only ever written whole; nothing older to clear
+        elif anim == "divening":
             remove_stale(prefix, "dive", written)
             remove_stale(prefix, "ninja", written)
         else:

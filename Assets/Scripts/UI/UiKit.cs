@@ -152,6 +152,7 @@ namespace SealCatapult.UI
             img.sprite = Art.Get(sprite);
             img.preserveAspect = true;
             img.raycastTarget = false;
+            if (Progress.Skins.IsPup(sprite)) img.material = Progress.Skins.PupMaterial();   // the pup wears its skins on every screen
             return img;
         }
 
@@ -166,10 +167,10 @@ namespace SealCatapult.UI
         /// <summary>A full screen's painted background: the home painting covering any screen shape under a dark veil,
         /// so white outlined text and ice panels read on it (the loading screen, the shop). Nothing when the painting
         /// is missing: the caller's own flat colour shows.</summary>
-        public static void PaintedBackdrop(Transform parent, float veil)
+        public static void PaintedBackdrop(Transform parent, float veil, string painting = "bg_menu")
         {
-            if (!Art.Has("bg_menu")) return;
-            var bg = Image(parent, "bg_menu", Center, Vector2.zero, Vector2.zero);
+            if (!Art.Has(painting)) return;
+            var bg = Image(parent, painting, Center, Vector2.zero, Vector2.zero);
             bg.preserveAspect = false;
             var fit = bg.gameObject.AddComponent<AspectRatioFitter>();
             fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;

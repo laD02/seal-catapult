@@ -61,9 +61,12 @@ namespace SealCatapult.Launch
             r.anchor = anchor;
             // CPC (live, 17/11): the rope bows as it swings, so it is drawn as a few tiled pieces along a curve.
             r.segments = new SpriteRenderer[Segments];
+            var ropeSkin = Progress.Skins.Current(Progress.SkinKind.Rope);
+            var paint = Progress.Skins.Paint(ropeSkin);
             for (int i = 0; i < Segments; i++)
             {
-                var sr = Art.Spawn("rope", go.transform, anchor, RopeWidth, 6);
+                var sr = Art.Spawn(Progress.Skins.RopeSprite(ropeSkin), go.transform, anchor, RopeWidth, 6);
+                if (paint != null) sr.sharedMaterial = paint;
                 sr.drawMode = SpriteDrawMode.Tiled;   // uniform scale from Spawn keeps the twist at its old density
                 r.segments[i] = sr;
             }

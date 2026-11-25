@@ -51,6 +51,19 @@ SHEETS: dict[str, list[str | None]] = {
     "logo.png": ["logo"],
     # 19/11: CPC's tall slim bird cage on a red base, closed and opened ("xem lại hoạt họa trong lồng của cpc")
     "cage_cpc.png": ["cage", "cage_open"],
+    # 23/11: skin shop pieces: effect particles (trails, impacts), the "owned" tick, and the whacker's ball skins
+    "skin_props.png": [
+        "fx_heart", "fx_bubble", "fx_note", "fx_flame", "fx_bolt", "fx_blossom", "mark_tick",
+        "ball_stone", "ball_melon", "ball_coconut", "ball_disco", "ball_beach", "ball_bowling", "ball_golden", "ball_puffer",
+    ],
+    # 23/11: drawn launcher skins, each a ChatGPT redraw of the classic arm (top) and cart (bottom) on one sheet
+    **{f"catapult_skin_{t}.png": [f"cart_{t}_arm", f"cart_{t}_base"] for t in ("ice", "pirate", "candy", "royal", "dragon", "rocket", "bamboo", "lava")},
+    # 23/11: the pirate outfit's HUD portrait and the tricorn that falls off in the arena (outfit_pirate/hud_hat.png)
+    "outfit_pirate/hud_hat.png": ["pirate_hud_pup", "pirate_pup_hat"],
+    "outfit_ninja/hud_hat.png": ["ninja_hud_pup", None],   # its headband came out with fur on it: hat_band.png
+    "outfit_ninja/hat_band.png": ["ninja_pup_hat"],
+    # 23/11: the ice podium the selected skin stands on in the shop
+    "shop_podium.png": ["shop_podium"],
     # 18/11: the red X that closes a modal (top-right corner of every panel)
     "ui_close.png": ["icon_close"],
     # 18/11: pieces of the redesigned modals (pause, result, settings, stats, how to play), Ice crystal style
@@ -87,6 +100,9 @@ HOLES: dict[str, list[tuple[int, int]]] = {
     "catapult_base": [(380, 62), (370, 150), (325, 225), (440, 175)],   # hub hole and the A-frame gaps (cart of 16/11)
     "catapult_arm": [(48, 100)],
 }
+
+
+CLASSIC_SIZE = {"catapult_base": (729, 426), "catapult_arm": (728, 156)}   # the parts HOLES was measured on
 
 
 def clear_holes(part: Image.Image, seeds: list[tuple[int, int]]) -> Image.Image:
@@ -181,6 +197,23 @@ def cut(sheet: str, names: list[str | None]) -> None:
         canvas.alpha_composite(part, (PAD, PAD))
         if name in HOLES:
             canvas = clear_holes(canvas, HOLES[name])
+        if name.startswith("cart_"):
+            # A drawn launcher skin keeps the classic silhouette: its holes sit at the same fractions of the picture.
+            classic = "catapult_" + name.rsplit("_", 1)[1]
+            cw, ch = CLASSIC_SIZE[classic]
+            # ...roughly: a redraw shifts them a little, so the points round each one are tried too. A fill that takes
+            # more than 6 % of the picture ran into snow or icing, not a hole, and is dropped.
+            for x, y in HOLES[classic]:
+                for dx, dy in ((0, 0), (-0.04, 0), (0.04, 0), (0, -0.06), (0, 0.06), (-0.02, -0.12), (0, -0.18), (-0.02, -0.24)):
+                    seed = (round((x / cw + dx) * canvas.width), round((y / ch + dy) * canvas.height))
+                    if not (0 <= seed[0] < canvas.width and 0 <= seed[1] < canvas.height):
+                        continue
+                    if not all(v > WHITE_HOLE for v in canvas.getpixel(seed)[:3]) or canvas.getpixel(seed)[3] == 0:
+                        continue
+                    tried = clear_holes(canvas, [seed])
+                    gone = int((np.asarray(canvas)[..., 3] > 0).sum() - (np.asarray(tried)[..., 3] > 0).sum())
+                    if gone < 0.06 * canvas.width * canvas.height:
+                        canvas = tried
         if name.startswith("ice_chunk_"):
             canvas = keep_body(canvas, share=0.99)   # only the chunk itself; chunks drawn close together: drop a neighbour's corner caught in the box
         if name in CLEAR_LIGHT:

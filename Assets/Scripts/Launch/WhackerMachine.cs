@@ -56,15 +56,18 @@ namespace SealCatapult.Launch
             root.localScale = new Vector3(-1f, 1f, 1f);   // face the pit on the left
             var m = root.gameObject.AddComponent<WhackerMachine>();
             m.reloadTime = reloadTime;
-            var b = Art.Spawn("catapult_base", root, new Vector2(-HubOffsetX, 0f), BaseWidth, 8);
+            var cart = Progress.Skins.Current(Progress.SkinKind.Launcher);
+            var b = Art.Spawn(Progress.Skins.CartBase(cart), root, new Vector2(-HubOffsetX, 0f), BaseWidth, 8);
             m.baseTr = b.transform;
             m.baseScale = b.transform.localScale;
             m.pivot = new GameObject("ArmPivot").transform;
             m.pivot.SetParent(root, false);
             m.pivot.localPosition = new Vector2(0f, HubOffsetY);
-            var arm = Art.Spawn("catapult_arm", m.pivot, ArmPivotOffset, ArmWidth, 9);
+            var arm = Art.Spawn(Progress.Skins.CartArm(cart), m.pivot, ArmPivotOffset, ArmWidth, 9);
             arm.name = "Arm";
-            m.cupBall = Art.Spawn("snowball", m.pivot, new Vector2(Reach, CupLift + BallSize * 0.35f), BallSize, 10);
+            m.cupBall = Art.Spawn(Progress.Skins.Current(Progress.SkinKind.Ball).sprite, m.pivot, new Vector2(Reach, CupLift + BallSize * 0.35f), BallSize, 10);
+            var paint = Progress.Skins.Paint(cart);
+            if (paint != null) b.sharedMaterial = arm.sharedMaterial = paint;
             m.SetAngle(RestAngle);
             return m;
         }

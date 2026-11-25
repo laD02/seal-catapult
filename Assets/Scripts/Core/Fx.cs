@@ -137,6 +137,8 @@ namespace SealCatapult.Core
         /// scattering out of it.</summary>
         public static void Splat(Vector2 at)
         {
+            var skin = SealCatapult.Progress.Skins.Current(SealCatapult.Progress.SkinKind.Impact);
+            if (!skin.IsClassic) Burst(skin.sprite, at, 7, 4.5f, 0.6f, 0.32f, 5f, 0.15f);   // the impact skin, on top of the snow
             var cloud = Particle("snow_puff", at, 0.9f, 42);
             cloud.grow = 1.4f;
             cloud.drag = 0f;
@@ -233,10 +235,16 @@ namespace SealCatapult.Core
         /// <summary>A soft snow-dust dot left behind a flying pup.</summary>
         public static void Trail(Vector2 at)
         {
-            var p = Particle("powder", at + Random.insideUnitCircle * 0.08f, Random.Range(0.18f, 0.3f), 15);
+            var skin = SealCatapult.Progress.Skins.Current(SealCatapult.Progress.SkinKind.Trail);
+            var p = Particle(skin.sprite, at + Random.insideUnitCircle * 0.08f, Random.Range(0.18f, 0.3f), 15);
             p.velocity = Random.insideUnitCircle * 0.3f;
             p.life = Random.Range(0.35f, 0.55f);
             p.grow = 0.6f;
+            if (skin.IsClassic) return;
+            // A trail skin is a drawn shape, not a dust dot: it tumbles and lingers a little longer so it reads.
+            p.spin = Random.Range(-180f, 180f);
+            p.life += 0.2f;
+            p.grow = 0.2f;
         }
 
         /// <summary>Celebration burst of stars and snow around a point (results, perfect level).</summary>

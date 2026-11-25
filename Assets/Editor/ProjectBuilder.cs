@@ -197,7 +197,10 @@ namespace SealCatapult.EditorTools
                 bool painting = name.StartsWith("bg_") || name.StartsWith("story_") || name.StartsWith("map_bg");
                 var android = importer.GetPlatformTextureSettings("Android");
                 android.overridden = true;
-                android.format = painting ? TextureImporterFormat.ASTC_6x6 : TextureImporterFormat.ASTC_4x4;
+                // A drawn outfit (<outfit>_pup_<anim>_<i>, Tools/slice_sheets.py --outfit) is ~450 more frames: the smaller
+                // blocks keep each outfit near 20 MB of texture instead of 45.
+                bool outfit = !name.StartsWith("pup_") && name.Contains("_pup_");
+                android.format = painting || outfit ? TextureImporterFormat.ASTC_6x6 : TextureImporterFormat.ASTC_4x4;
                 android.maxTextureSize = 2048;
                 android.compressionQuality = 50;
                 importer.SetPlatformTextureSettings(android);
@@ -205,7 +208,7 @@ namespace SealCatapult.EditorTools
                 var settings = new TextureImporterSettings();
                 importer.ReadTextureSettings(settings);
                 float border = SliceBorder(name);
-                bool tiled = name.StartsWith("rock_cobble") || name == "rock_top" || name == "rope";   // drawn with SpriteDrawMode.Tiled (the rope tiles along its curved segments)
+                bool tiled = name.StartsWith("rock_cobble") || name == "rock_top" || name == "rope" || name.StartsWith("rope_");   // drawn with SpriteDrawMode.Tiled along the rope's curve (rope_<skin>: drawn rope skins)
                 settings.spriteMeshType = border > 0 || tiled ? SpriteMeshType.FullRect : SpriteMeshType.Tight;
                 importer.SetTextureSettings(settings);
                 // beam.png is 320×90: only its ends are caps, so the border is horizontal (a 60 px top/bottom border would squash it).

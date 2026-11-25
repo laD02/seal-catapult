@@ -29,6 +29,9 @@ namespace SealCatapult.Core
         public bool seenIntro;                         // the opening story played once already
         public bool seenHowTo;                         // unused since 15/11 (the first Play starts level 1); kept so old saves still load
         public bool reviewAsked;                       // Play took the one in-app review request (kept by Erase)
+        // Skin shop (Progress/Skins.cs): skins are bought with stars, like the upgrades (spentStars counts both).
+        public string[] skins = new string[0];          // ids of the skins bought (the free "classic" ones are never stored)
+        public string[] worn = new string[0];           // id worn per SkinKind; "" = that kind's classic
 
         /// <summary>Repairs data from older or hand-edited files so the game never indexes out of range.</summary>
         public void Normalize()
@@ -50,6 +53,7 @@ namespace SealCatapult.Core
             combo3 = Mathf.Max(0, combo3);
             combo4 = Mathf.Max(0, combo4);
             if (Array.IndexOf(Loc.Codes, language) < 0) language = "";
+            SealCatapult.Progress.Skins.Normalize(this);
         }
 
         /// <summary>Best stars of a level; 0 for one never won (the arrays only reach as far as levels were played).</summary>
@@ -125,6 +129,7 @@ namespace SealCatapult.Core
         {
             Data = LoadFrom(DefaultPath, out bool damaged);
             LoadFailed = damaged;
+            SealCatapult.Progress.Skins.NotifyChanged();   // the worn outfit's frames, before any pup is drawn
             if (damaged) Problem?.Invoke("save_damaged");
             loaded = true;
         }
@@ -161,6 +166,7 @@ namespace SealCatapult.Core
                 language = keep.language,
                 reviewAsked = keep.reviewAsked,
             };
+            SealCatapult.Progress.Skins.NotifyChanged();   // skins go with the progress: pups go back to classic
             Save();
         }
 

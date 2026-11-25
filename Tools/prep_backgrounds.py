@@ -20,6 +20,7 @@ OUT = ROOT / "Assets" / "Resources" / "Art"
 # output sprite -> painting it comes from (Tools/make_art.py leaves these alone once the painting exists)
 PAINTINGS = {"bg_pit": "pit_bg_wide5.png", "bg_arena_sky": "arena_sky.png",
              "map_bg": "map_island.png", "bg_menu": "menu_bay.png",
+             "bg_shop": "shop_bay.png",   # 23/11: the shop page's bright bay (design 1 of shop_mockups.png)
              **{f"story_{i}": f"story_{i}.png" for i in range(1, 6)},
              "rock_cobble": "pit_side_walls_box.png", "rock_top": "pit_side_walls_box.png"}
 
@@ -116,6 +117,7 @@ def main() -> None:
     build_pit()
     crop_16_9("map_bg", PAINTINGS["map_bg"])
     crop_16_9("bg_menu", PAINTINGS["bg_menu"])
+    crop_16_9("bg_shop", PAINTINGS["bg_shop"])
     for i in range(1, 6):
         crop_16_9(f"story_{i}", PAINTINGS[f"story_{i}"])
     build_terrain()

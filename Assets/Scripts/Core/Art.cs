@@ -8,10 +8,41 @@ namespace SealCatapult.Core
     {
         static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
 
+        /// <summary>The drawn outfit the pup wears ("pirate_"; "" = as first drawn): every picture of the pup
+        /// (pup_*, pup, hud_pup) is taken from that outfit's own frames when it has them (Tools/slice_sheets.py --outfit).</summary>
+        public static string Outfit { get; private set; } = "";
+
+        public static void SetOutfit(string prefix)
+        {
+            prefix ??= "";
+            if (prefix == Outfit) return;
+            Outfit = prefix;
+            var pups = new List<string>();
+            foreach (var key in cache.Keys) if (IsPup(key)) pups.Add(key);
+            foreach (var key in pups) cache.Remove(key);   // looked up again under the new outfit; nothing is unloaded here
+        }
+
+        /// <summary>True for the sprites that show the pup itself.</summary>
+        public static bool IsPup(string name) =>
+            name != null && (name == "pup" || name == "hud_pup" || name.StartsWith("pup_", System.StringComparison.Ordinal));
+
+        static Sprite Load(string name)
+        {
+            if (Outfit.Length > 0 && IsPup(name))
+            {
+                var dressed = Resources.Load<Sprite>("Art/" + Outfit + name);
+                if (dressed != null) return dressed;   // a frame the outfit lacks falls back to the classic one
+            }
+            return Resources.Load<Sprite>("Art/" + name);
+        }
+
+        /// <summary>The sprite exactly as named, whatever outfit is worn (the shop shows every outfit side by side).</summary>
+        public static Sprite Plain(string name) => Resources.Load<Sprite>("Art/" + name);
+
         public static Sprite Get(string name)
         {
             if (cache.TryGetValue(name, out var sprite)) return sprite;
-            sprite = Resources.Load<Sprite>("Art/" + name);
+            sprite = Load(name);
             if (sprite == null) Debug.LogWarning($"[SealCatapult] Missing sprite Resources/Art/{name}");
             cache[name] = sprite;
             return sprite;
@@ -21,7 +52,7 @@ namespace SealCatapult.Core
         public static bool Has(string name)
         {
             if (cache.TryGetValue(name, out var s)) return s != null;
-            var sprite = Resources.Load<Sprite>("Art/" + name);
+            var sprite = Load(name);
             cache[name] = sprite;   // misses are cached too: UI rebuilds probe optional icons often
             return sprite != null;
         }

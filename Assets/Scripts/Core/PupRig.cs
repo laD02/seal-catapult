@@ -92,9 +92,12 @@ namespace SealCatapult.Core
             return rig;
         }
 
+        static string loadedOutfit;
+
         static void LoadAnims()
         {
-            if (idle != null) return;
+            if (idle != null && loadedOutfit == Art.Outfit) return;
+            loadedOutfit = Art.Outfit;
             // One still frame (sheet I's cleanest): ChatGPT drew the four breathing frames at slightly different sizes, and
             // cycling them made the queue flicker (user 16/11). The breath is a gentle squash in code instead.
             idle = Load("idle", 1, 1f, 0, Anchor.Bottom, IdleStill) ?? Load("idle", 4, 3f, 0, Anchor.Bottom);
@@ -243,6 +246,25 @@ namespace SealCatapult.Core
             return new Anim { Frames = frames, Fps = fps, LoopFrom = loopFrom, Anchor = anchor };
         }
 
+        Material defaultMaterial;
+
+        /// <summary>Fur and outfit skins: one shared material for every pup (the renderer's own when nothing is worn).</summary>
+        string myOutfit;   // the outfit this rig's frames come from (each rig replays once when it changes)
+
+        void WearSkin()
+        {
+            if (sr == null || ballSr == null) return;
+            sr.sharedMaterial = ballSr.sharedMaterial = SealCatapult.Progress.Skins.PupMaterial() ?? defaultMaterial;
+            if (myOutfit == Art.Outfit || current == null) return;
+            // A drawn outfit is another set of frames: load it (once, shared) and carry on in the same pose.
+            LoadAnims();
+            myOutfit = Art.Outfit;
+            if (Current != Pose.Ball) Play(For(Current));
+            Place();
+        }
+
+        void OnDestroy() => SealCatapult.Progress.Skins.Changed -= WearSkin;
+
         void Build(int order)
         {
             LoadAnims();
@@ -256,6 +278,10 @@ namespace SealCatapult.Core
             ballSr.sortingOrder = order;
             SetBallSprite("pup_ball");
             ballSr.enabled = false;
+            defaultMaterial = sr.sharedMaterial;
+            myOutfit = Art.Outfit;   // LoadAnims above loaded this outfit's frames
+            WearSkin();
+            SealCatapult.Progress.Skins.Changed += WearSkin;
 
             variant = Random.Range(0, 1 << 16);
             blinkTimer = Random.Range(1.5f, 4f);

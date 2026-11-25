@@ -48,6 +48,7 @@ namespace SealCatapult.Core
         void Start()
         {
             SaveSystem.EnsureLoaded();
+            Skins.SetInPlay(true);   // skins are worn in a level only, before any pup or machine is built
             var db = GameDatabase.Instance;
             LevelIndex = Mathf.Max(0, SceneLoader.CurrentLevel);
             level = LevelCatalog.Get(LevelIndex);   // hand-made or generated: the castles have no end
@@ -148,6 +149,7 @@ namespace SealCatapult.Core
             BossBear.Beaten -= OnBossDown;
             Time.timeScale = 1f;
             GameInput.GameplayEnabled = true;
+            Skins.LeavePlay();   // last, and silent: the level's pups are being torn down, nothing here needs repainting
         }
 
         void BuildCamera()

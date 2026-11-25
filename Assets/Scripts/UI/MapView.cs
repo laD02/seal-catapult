@@ -110,7 +110,8 @@ namespace SealCatapult.UI
         void OnDestroy()
         {
             Art.Release("map_bg");
-            Art.Release("bg_menu");   // the shop's backdrop, loaded when the shop was opened from the map
+            Art.Release("bg_menu");
+            Art.Release("bg_shop");   // the shop's backdrop, loaded when the shop was opened from the map
         }
 
         /// <summary>The next level to play: the first one open and not yet won. The castles have no end, so there is

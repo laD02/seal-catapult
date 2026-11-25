@@ -148,6 +148,7 @@ What's inside
 • 18 levels in two areas: Frost Bay (10 fortress levels, a bonus fish level and a boss level with caged pups to free) and the Glacier River (6 harder fortresses)
 • Up to 3 stars per level, and a Perfect badge for knocking out every bear
 • 5 seal upgrades bought with stars, 3 levels each: Ice Spikes, Bouncy Ball, Pod, Ninja Pup and Blazing Pup
+• 50+ skins bought with stars: fur colours, outfits, catapult balls, flight trails, impact effects, catapult paint and ropes
 • Floor buttons, ice gates, bumpers and TNT in later levels
 • A stats page: bears knocked out, double, triple and quadruple combos, Perfect missions
 • Hand-painted cartoon art and a short opening story
@@ -187,6 +188,7 @@ Có gì trong game
 • 18 màn ở hai vùng: Vịnh Băng Giá (10 màn pháo đài, một màn thưởng nhặt cá và một màn boss có lồng nhốt hải cẩu con) và Sông Băng (6 pháo đài khó hơn)
 • Tối đa 3 sao mỗi màn, và huy hiệu Hoàn hảo khi hạ hết gấu
 • 5 nâng cấp hải cẩu mua bằng sao, mỗi cái 3 cấp: Gai băng, Cuộn tròn, Bầy hải cẩu, Hải cẩu ninja và Hải cẩu lửa
+• 50+ skin mua bằng sao: màu lông, trang phục, bóng máy phóng, vệt bay, hiệu ứng va chạm, màu máy phóng và dây đu
 • Nút sàn, cổng băng, vòng bật và thùng TNT ở các màn sau
 • Trang thống kê: tổng gấu đã hạ, số lần hạ 2, 3, 4 gấu một lượt, số màn hoàn hảo
 • Tranh hoạt hình vẽ tay và một đoạn truyện mở đầu ngắn
@@ -288,6 +290,7 @@ Das steckt drin
 • 18 Level in zwei Gebieten: die Frostbucht (10 Festungslevel, ein Bonuslevel mit Fischen und ein Bosslevel mit gefangenen Robbenbabys) und der Gletscherfluss (6 schwerere Festungen)
 • Bis zu 3 Sterne pro Level und ein Perfekt-Abzeichen, wenn alle Bären fallen
 • 5 Robben-Upgrades für Sterne, je 3 Stufen: Eisstacheln, Hüpfball, Rudel, Ninja-Robbe und Feuer-Robbe
+• 50+ Skins für Sterne: Fellfarben, Outfits, Katapultbälle, Flugspuren, Treffereffekte, Katapultfarben und Seile
 • Bodenschalter, Eistore, Bumper und TNT in späteren Leveln
 • Eine Statistikseite: besiegte Bären, Zweier-, Dreier- und Viererkombos, perfekte Missionen
 • Handgemalte Cartoon-Grafik und eine kurze Vorgeschichte
@@ -326,6 +329,7 @@ Au programme
 • 18 niveaux dans deux zones : la Baie Gelée (10 niveaux de forteresse, un niveau bonus de poissons et un niveau de boss avec des bébés phoques en cage) et la Rivière Glacée (6 forteresses plus dures)
 • Jusqu'à 3 étoiles par niveau, et un badge Parfait quand tous les ours tombent
 • 5 améliorations achetées avec des étoiles, 3 niveaux chacune : Pics de glace, Boule rebondissante, Bande, Phoque ninja et Phoque de feu
+• 50+ skins à acheter avec des étoiles : pelages, tenues, balles de catapulte, traînées, effets d'impact, peintures de catapulte et cordes
 • Interrupteurs au sol, portes de glace, bumpers et TNT dans les niveaux suivants
 • Une page de statistiques : ours mis K.O., combos doubles, triples et quadruples, missions parfaites
 • Des dessins façon dessin animé peints à la main et une courte histoire d'introduction
@@ -364,6 +368,7 @@ Qué incluye
 • 18 niveles en dos zonas: la Bahía Helada (10 niveles de fortaleza, un nivel extra de peces y un nivel de jefe con crías enjauladas) y el Río Glaciar (6 fortalezas más difíciles)
 • Hasta 3 estrellas por nivel y una insignia Perfecto si caen todos los osos
 • 5 mejoras que se compran con estrellas, 3 niveles cada una: Púas de hielo, Bola saltarina, Manada, Foca ninja y Foca de fuego
+• 50+ aspectos que se compran con estrellas: pelajes, atuendos, bolas de catapulta, estelas, efectos de impacto, pintura de catapulta y cuerdas
 • Interruptores en el suelo, puertas de hielo, rebotadores y TNT en los niveles posteriores
 • Una página de estadísticas: osos derribados, combos dobles, triples y cuádruples, misiones perfectas
 • Dibujos animados pintados a mano y una breve historia inicial
@@ -402,6 +407,7 @@ Cosa c'è dentro
 • 18 livelli in due zone: la Baia Gelata (10 livelli fortezza, un livello bonus con i pesci e un livello boss con cuccioli in gabbia) e il Fiume Glaciale (6 fortezze più difficili)
 • Fino a 3 stelle per livello e un distintivo Perfetto quando cadono tutti gli orsi
 • 5 potenziamenti da comprare con le stelle, 3 livelli ciascuno: Punte di ghiaccio, Palla rimbalzante, Branco, Foca ninja e Foca di fuoco
+• 50+ skin da comprare con le stelle: pellicce, completi, palle da catapulta, scie, effetti d'impatto, vernici per la catapulta e corde
 • Pulsanti a terra, cancelli di ghiaccio, respingenti e TNT nei livelli successivi
 • Una pagina di statistiche: orsi messi KO, combo doppie, triple e quadruple, missioni perfette
 • Grafica a cartone animato dipinta a mano e una breve storia iniziale
@@ -440,6 +446,7 @@ Co jest w grze
 • 18 poziomów w dwóch krainach: Mroźna Zatoka (10 poziomów z fortecami, poziom bonusowy z rybami i poziom z bossem, gdzie trzeba uwolnić małe foki z klatek) oraz Lodowa Rzeka (6 trudniejszych fortec)
 • Do 3 gwiazdek na poziom i odznaka Perfekcyjnie, gdy padną wszystkie niedźwiedzie
 • 5 ulepszeń za gwiazdki, każde po 3 poziomy: Lodowe kolce, Skacząca piłka, Stado, Foka ninja i Ognista foka
+• 50+ skórki za gwiazdki: kolory futra, stroje, kule katapulty, smugi, efekty uderzeń, farby katapulty i liny
 • Przyciski w podłodze, lodowe bramy, odbijacze i TNT w dalszych poziomach
 • Strona statystyk: znokautowane niedźwiedzie, combo podwójne, potrójne i poczwórne, perfekcyjne misje
 • Ręcznie malowana grafika w stylu kreskówki i krótka historia na początek
